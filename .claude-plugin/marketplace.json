@@ -9,7 +9,7 @@
     {
       "name": "jeongri",
       "description": "A curated collection of opinionated skills that sharpen how Claude Code reasons, communicates, and ships software.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./",
       "author": {
         "name": "Luke Smith",
