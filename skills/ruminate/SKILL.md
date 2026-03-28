@@ -27,14 +27,13 @@ You MUST create a task for each of these items and complete them in order:
 2. **Assess scope** — single feature or large multi-phase project?
    - If large: invoke the phasing skill; it handles decomposition, review, and sign-off, then hands back here at step 3 with phase context established
    - If single: continue
-3. **Offer visual companion** (if topic will involve visual questions) — own message, not combined with a clarifying question. See Visual Companion section.
-4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-5. **Propose 2-3 approaches** — with trade-offs, pattern conformance assessment, and your recommendation
-6. **Present design** — in sections scaled to complexity, including pattern fit and testing; get user approval after each section
-7. **Write design doc** — save to `docs/jeongri/specs/YYYY-MM-DD-<topic>-design.md` (include phase reference if applicable), commit
-8. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
-9. **User reviews written spec** — ask user to review the spec file before proceeding
-10. **Transition** — invoke writing-plans skill; if phases remain, mark the current phase complete in the phases doc (add spec path), commit, then return to step 3 for the next pending phase
+3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+4. **Propose 2-3 approaches** — with trade-offs, pattern conformance assessment, and your recommendation
+5. **Present design** — in sections scaled to complexity, including pattern fit and testing; get user approval after each section
+6. **Write design doc** — save to `docs/jeongri/specs/YYYY-MM-DD-<topic>-design.md` (include phase reference if applicable), commit
+7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
+8. **User reviews written spec** — ask user to review the spec file before proceeding
+9. **Transition** — invoke writing-plans skill; if phases remain, mark the current phase complete in the phases doc (add spec path), commit, then return to step 3 for the next pending phase
 
 ## Process Flow
 
@@ -43,8 +42,6 @@ digraph ruminate {
     "Update project context" [shape=box];
     "Large/multi-phase?" [shape=diamond];
     "Invoke phasing skill" [shape=box];
-    "Visual questions ahead?" [shape=diamond];
-    "Offer Visual Companion\n(own message, no other content)" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
@@ -58,11 +55,8 @@ digraph ruminate {
 
     "Update project context" -> "Large/multi-phase?";
     "Large/multi-phase?" -> "Invoke phasing skill" [label="yes"];
-    "Large/multi-phase?" -> "Visual questions ahead?" [label="no"];
-    "Invoke phasing skill" -> "Visual questions ahead?" [label="phase context\nestablished"];
-    "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
-    "Visual questions ahead?" -> "Ask clarifying questions" [label="no"];
-    "Offer Visual Companion\n(own message, no other content)" -> "Ask clarifying questions";
+    "Large/multi-phase?" -> "Ask clarifying questions" [label="no"];
+    "Invoke phasing skill" -> "Ask clarifying questions" [label="phase context\nestablished"];
     "Ask clarifying questions" -> "Propose 2-3 approaches";
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
@@ -133,7 +127,7 @@ Before asking detailed questions, assess scope. If the request describes multipl
 
 **If large/multi-phase:** invoke the phasing skill. It handles decomposition, phase review, and user sign-off, then hands back here with phase context established. See `skills/phasing/SKILL.md`.
 
-### 3–4. Clarifying Questions
+### 3. Clarifying Questions
 
 
 **Clarifying questions:**
@@ -142,14 +136,14 @@ Before asking detailed questions, assess scope. If the request describes multipl
 - Focus on: purpose, constraints, success criteria
 - If a topic needs more exploration, break it into multiple questions across messages
 
-### 5. Approaching the Problem
+### 4. Approaching the Problem
 
 - Propose 2–3 different approaches with trade-offs
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 - For each approach, explicitly assess **pattern conformance**: does it follow existing patterns found in `context.md`, or introduce something new? If new, briefly justify why existing patterns don't fit
 
-### 6. Presenting the Design
+### 5. Presenting the Design
 
 Once you understand what you're building, present the design in sections scaled to their complexity. Ask after each section whether it looks right. Cover:
 
@@ -175,7 +169,7 @@ Once you understand what you're building, present the design in sections scaled 
 - Follow existing patterns found in `context.md`. Where existing code has problems that affect the work, include targeted improvements as part of the design.
 - Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
-### 7. Writing the Spec
+### 6. Writing the Spec
 
 Save to `docs/jeongri/specs/YYYY-MM-DD-<topic>-design.md`.
 
