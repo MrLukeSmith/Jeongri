@@ -39,7 +39,7 @@ gh pr view {pr_number} --json title,body,additions,deletions,files,baseRefName
 gh pr diff {pr_number}
 ```
 
-Read the full PR title, description, and diff. Then browse the broader codebase to build context:
+Read the full PR title, description, and diff. Then browse the broader codebase to build context — focus on the files directly modified and their immediate dependencies; do not read the entire codebase:
 
 - **Test presence:** Are there test files? What testing framework? What's the coverage pattern for the files being modified?
 - **Error handling conventions:** How does this codebase handle errors — exceptions, result types, error codes?
@@ -52,12 +52,12 @@ This context informs every severity judgment in the next step.
 
 Work through all seven criteria in order. For each, assess the diff against the codebase context from Step 1. Produce an internal findings list before drafting any comment.
 
-**Internal working format — record each finding as:**
+**Internal working format — write this list explicitly in your response before proceeding to Step 3:**
 ```
 Criterion: <name>
 Finding: <what the issue is, specifically>
 Location: <file:line or area of diff>
-Severity: [blocking] / [suggestion] / [nit]
+Severity: `[blocking]` / `[suggestion]` / `[nit]`
 Reason: <one sentence on why this severity>
 ```
 
@@ -67,6 +67,7 @@ If a criterion has no findings, move on — do not manufacture observations.
 
 **1. Correctness** — Logic errors, wrong assumptions, off-by-ones, incorrect branching. Any plausible path where this code produces the wrong result.
 - `[blocking]` — any realistic path to incorrect output
+- If uncertain whether a correctness concern is actually reachable, still tag it `[blocking]` and let the verification subagent confirm — do not silently drop it
 
 **2. Error & Edge Case Handling** — Silent failures, unhandled nulls, missing state transitions, unchecked return values.
 - `[blocking]` — data loss, crashes, or security-relevant failures
@@ -77,7 +78,7 @@ If a criterion has no findings, move on — do not manufacture observations.
 - `[suggestion]` — theoretical risks or defence-in-depth improvements with no clear attack path
 
 **4. Test Coverage** — Before judging, check the codebase for existing tests and whether the modified component was previously tested.
-- `[blocking]` if: complex new logic has no tests regardless of existing coverage; OR an existing tested component is modified without updating coverage for the new behaviour
+- `[blocking]` if: complex new logic has no tests regardless of existing coverage (complex = multiple branches, state mutation, or external I/O — not a single-expression helper); OR an existing tested component is modified without updating coverage for the new behaviour
 - `[suggestion]` if: simple additions to a codebase with no existing tests (bad practice, not a blocker)
 - `[nit]` if: a trivial helper in an otherwise well-tested codebase lacks a test
 
@@ -103,5 +104,7 @@ The subagent returns one of:
 
 **On refutation:** downgrade to `[suggestion]` or drop the finding entirely.
 **On inconclusive:** retain as `[blocking]` but note the uncertainty explicitly in the comment.
+
+If the findings list contains no `[blocking]` items, proceed directly to Step 4.
 
 Do not proceed to drafting until all `[blocking]` findings have been verified.
