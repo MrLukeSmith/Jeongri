@@ -195,3 +195,26 @@ If there are no inline file comments, use `"comments": []` in the payload.
 The review is now in PENDING state. Navigate to the GitHub PR to inspect, edit, and submit.
 
 ---
+
+## Anti-Patterns
+
+Do not do any of the following:
+
+| Anti-pattern | Why |
+|---|---|
+| Style opinions without a style guide or linter rule | Personal preference dressed as a standard |
+| Bikeshedding naming when the existing name is clear | Noise that obscures real findings |
+| Blocking on personal preference | Wastes author time; undermines trust in reviews |
+| Flagging every criterion on every PR | If no findings, say nothing |
+| Asserting `[blocking]` without verification | A wrong blocking claim is worse than a missed suggestion |
+| Submitting the review | User controls submission via GitHub UI |
+| Writing comments before finishing the analysis pass | Leads to redundant or contradictory feedback |
+
+---
+
+## Communication Tone
+
+- Write to a colleague, not a student. Assume good intent.
+- Don't soften blocking issues with excessive hedging — be clear about what's wrong.
+- Don't editorialize. State the problem, why it matters, offer a direction.
+- For suggestions and nits, be brief. No extended reasoning needed.
