@@ -63,6 +63,14 @@ Reason: <one sentence on why this severity>
 
 If a criterion has no findings, move on — do not manufacture observations.
 
+**Severity reference:**
+
+| Label | Meaning | Requires subagent verification | Blocks merge |
+|---|---|---|---|
+| `[blocking]` | Must be fixed before merge | Yes — for reachability/correctness claims | Yes |
+| `[suggestion]` | Should be addressed; author's call | No | No |
+| `[nit]` | Minor; no pressure | No | No |
+
 **The seven criteria:**
 
 **1. Correctness** — Logic errors, wrong assumptions, off-by-ones, incorrect branching. Any plausible path where this code produces the wrong result.
