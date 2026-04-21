@@ -108,3 +108,82 @@ The subagent returns one of:
 If the findings list contains no `[blocking]` items, proceed directly to Step 4.
 
 Do not proceed to drafting until all `[blocking]` findings have been verified.
+
+---
+
+### Step 4 — Draft Review
+
+Write comments from the verified findings list.
+
+**Blocking comment (must include evidence):**
+```
+[blocking] <what the problem is> — <why it matters>.
+<evidence: file:line, call path, or code snippet from the verification subagent>
+Consider: <what to do instead, or where to look>.
+```
+
+**Suggestion:**
+```
+[suggestion] <observation> — <brief reasoning>. Consider <direction>.
+```
+
+**Nit:**
+```
+[nit] <observation>.
+```
+
+After all per-comment findings, write an **aggregate summary** (2–3 sentences):
+- State the overall picture
+- Include the **recommended event type** — what you would submit if you were submitting: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`
+- If requesting changes: name the specific blocking issues by name
+- If approving with suggestions: say so explicitly so the author knows they can merge
+
+**Recommended event type guide:**
+- `APPROVE` — no verified blocking issues remain
+- `REQUEST_CHANGES` — one or more verified blocking issues remain
+- `COMMENT` — clarifying questions only, or insufficient context to approve or block
+
+### Step 5 — Show
+
+Display the full draft to the user before touching GitHub:
+- All comments with severity labels and file locations
+- The aggregate summary
+- The recommended event type and what it means for the author
+
+### Step 6 — Confirm
+
+Ask explicitly:
+
+> "This will be saved as a draft review on GitHub in PENDING state — visible only to you until you submit via the GitHub UI. Shall I save it?"
+
+Do not proceed without a clear yes.
+
+### Step 7 — Save as Draft
+
+Get the diff to extract correct hunk positions (the `position` field is the sequential line number within the unified diff output, not the file line number):
+
+```bash
+gh pr diff {pr_number} --patch
+```
+
+Post the pending review:
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
+  --method POST \
+  --input - <<'EOF'
+{
+  "body": "<aggregate summary with recommended event type>",
+  "event": "PENDING",
+  "comments": [
+    {
+      "path": "<file path relative to repo root>",
+      "position": <diff hunk position>,
+      "body": "<[severity] comment text including evidence if blocking>"
+    }
+  ]
+}
+EOF
+```
+
+The review is now in PENDING state. Navigate to the GitHub PR to inspect, edit, and submit.
