@@ -14,7 +14,11 @@ You are verifying a specific claim about a code change before it is posted as a 
 
 Your task:
 1. Read the code at the specified location in full.
-2. Trace all call sites that can reach this code — follow the call chain as deep as needed.
+2. Trace all call sites that can reach this code:
+   a. Identify the function(s) at the specified location.
+   b. Search the entire codebase for every call site using a code search tool (grep or equivalent) on the function name and any aliased imports.
+   c. For each call site found, read the surrounding context to determine whether the condition in the claim can be satisfied from that call path.
+   Stop as soon as you can confirm or rule out the claim — you do not need to trace every possible path, only enough to reach a confident verdict.
 3. Check whether the condition described in the claim is actually reachable with a realistic input or code path.
 4. Return exactly one of:
    - **Confirmed** — the claim is correct. Provide: the specific `file:line` where the problem exists, the full call path that reaches it, and a minimal code snippet demonstrating the issue.

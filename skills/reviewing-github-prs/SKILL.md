@@ -95,7 +95,9 @@ If a criterion has no findings, move on — do not manufacture observations.
 
 ### Step 3 — Verification Pass
 
-For every `[blocking]` finding in the list, dispatch a verification subagent before writing the comment. See `verification-subagent.md` for the exact prompt template.
+For every `[blocking]` finding that involves a reachability or correctness claim, dispatch a verification subagent before writing the comment. See `verification-subagent.md` for the exact prompt template.
+
+For `[blocking]` findings on Complexity or Codebase Consistency (where the concern is about design quality rather than a reachable bug), assess the evidence inline — the verification subagent is not applicable to these.
 
 The subagent returns one of:
 - **Confirmed** — with evidence: specific file:line, call path, or code snippet proving the claim
@@ -209,6 +211,7 @@ Do not do any of the following:
 | Asserting `[blocking]` without verification | A wrong blocking claim is worse than a missed suggestion |
 | Submitting the review | User controls submission via GitHub UI |
 | Writing comments before finishing the analysis pass | Leads to redundant or contradictory feedback |
+| Referencing facts about the codebase not visible in the diff or the Step 1 read | Hallucinated context; treat only what you can observe as ground truth |
 
 ---
 
