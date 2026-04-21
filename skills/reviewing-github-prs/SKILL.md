@@ -17,6 +17,7 @@ Verify the `gh` CLI is installed and authenticated:
 
 ```bash
 gh --version
+gh auth status
 ```
 
 Ask the user for the PR number if not provided. Identify `{owner}` and `{repo}` from the current git remote:
