@@ -187,3 +187,5 @@ EOF
 ```
 
 The review is now in PENDING state. Navigate to the GitHub PR to inspect, edit, and submit.
+
+---
