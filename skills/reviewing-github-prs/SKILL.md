@@ -27,3 +27,81 @@ git remote get-url origin
 ```
 
 ---
+
+## Workflow
+
+### Step 1 — Context Pass
+
+Fetch the PR metadata and diff:
+
+```bash
+gh pr view {pr_number} --json title,body,additions,deletions,files,baseRefName
+gh pr diff {pr_number}
+```
+
+Read the full PR title, description, and diff. Then browse the broader codebase to build context:
+
+- **Test presence:** Are there test files? What testing framework? What's the coverage pattern for the files being modified?
+- **Error handling conventions:** How does this codebase handle errors — exceptions, result types, error codes?
+- **Naming and structural patterns:** What conventions are established in nearby files?
+- **Existing abstractions:** What utilities or patterns already exist that the PR should be using?
+
+This context informs every severity judgment in the next step.
+
+### Step 2 — Analysis Pass
+
+Work through all seven criteria in order. For each, assess the diff against the codebase context from Step 1. Produce an internal findings list before drafting any comment.
+
+**Internal working format — record each finding as:**
+```
+Criterion: <name>
+Finding: <what the issue is, specifically>
+Location: <file:line or area of diff>
+Severity: [blocking] / [suggestion] / [nit]
+Reason: <one sentence on why this severity>
+```
+
+If a criterion has no findings, move on — do not manufacture observations.
+
+**The seven criteria:**
+
+**1. Correctness** — Logic errors, wrong assumptions, off-by-ones, incorrect branching. Any plausible path where this code produces the wrong result.
+- `[blocking]` — any realistic path to incorrect output
+
+**2. Error & Edge Case Handling** — Silent failures, unhandled nulls, missing state transitions, unchecked return values.
+- `[blocking]` — data loss, crashes, or security-relevant failures
+- `[suggestion]` — degraded-but-recoverable paths that aren't handled
+
+**3. Security** — Input validation, auth/authz boundaries, exposed secrets, injection surface, insecure defaults.
+- `[blocking]` — genuine vulnerability with a realistic attack path
+- `[suggestion]` — theoretical risks or defence-in-depth improvements with no clear attack path
+
+**4. Test Coverage** — Before judging, check the codebase for existing tests and whether the modified component was previously tested.
+- `[blocking]` if: complex new logic has no tests regardless of existing coverage; OR an existing tested component is modified without updating coverage for the new behaviour
+- `[suggestion]` if: simple additions to a codebase with no existing tests (bad practice, not a blocker)
+- `[nit]` if: a trivial helper in an otherwise well-tested codebase lacks a test
+
+**5. Complexity** — Unnecessary indirection, deep nesting, confusing naming, functions doing too many things.
+- `[suggestion]` in most cases; author may have context that justifies it
+- `[blocking]` only if genuinely unmaintainable or obscures correctness
+
+**6. Codebase Consistency** — Does this introduce a new pattern where one exists? Does it break established conventions identified in Step 1?
+- `[suggestion]` in most cases
+- `[blocking]` only if the inconsistency is likely to cause bugs (e.g. diverging from a safety convention)
+
+**7. Scope Creep** — Does the PR do more than described? Does it mix unrelated concerns in a way that makes review harder or rollback riskier?
+- `[suggestion]` always — sometimes scope creep is valid, but worth surfacing
+
+### Step 3 — Verification Pass
+
+For every `[blocking]` finding in the list, dispatch a verification subagent before writing the comment. See `verification-subagent.md` for the exact prompt template.
+
+The subagent returns one of:
+- **Confirmed** — with evidence: specific file:line, call path, or code snippet proving the claim
+- **Refuted** — with explanation of why the initial reading was wrong
+- **Inconclusive** — with what was checked and what remains uncertain
+
+**On refutation:** downgrade to `[suggestion]` or drop the finding entirely.
+**On inconclusive:** retain as `[blocking]` but note the uncertainty explicitly in the comment.
+
+Do not proceed to drafting until all `[blocking]` findings have been verified.
