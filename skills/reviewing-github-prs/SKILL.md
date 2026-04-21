@@ -146,7 +146,7 @@ After all per-comment findings, write an **aggregate summary** (2–3 sentences)
 ### Step 5 — Show
 
 Display the full draft to the user before touching GitHub:
-- All comments with severity labels and file locations
+- Each comment in the exact body text it will be posted (verbatim, not summarised), alongside its file path and severity label
 - The aggregate summary
 - The recommended event type and what it means for the author
 
@@ -162,9 +162,13 @@ Do not proceed without a clear yes.
 
 Get the diff to extract correct hunk positions (the `position` field is the sequential line number within the unified diff output, not the file line number):
 
+To derive the correct position: within the patch output, find the hunk containing your target line. Count lines sequentially from 1 starting at that hunk's `@@` header line (the `@@` line itself is position 1). Context lines, added lines, and removed lines all increment the counter; only the file header lines (`---`/`+++`) do not.
+
 ```bash
 gh pr diff {pr_number} --patch
 ```
+
+**The `event` field is always `"PENDING"` regardless of the recommended event type. The recommended event type is advisory prose in the body — for the user to select manually when they submit. Never change `"PENDING"` to another value.**
 
 Post the pending review:
 
@@ -185,6 +189,8 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
 }
 EOF
 ```
+
+If there are no inline file comments, use `"comments": []` in the payload.
 
 The review is now in PENDING state. Navigate to the GitHub PR to inspect, edit, and submit.
 
