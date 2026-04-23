@@ -127,7 +127,7 @@ Write comments from the verified findings list.
 
 **Blocking comment (must include evidence):**
 ```
-[blocking] <what the problem is — one tight sentence>.
+[AI][blocking] <what the problem is — one tight sentence>.
 
 <evidence: file:line or minimal code snippet from the verification subagent>
 
@@ -136,12 +136,12 @@ Consider: <what to do instead or where to look>.
 
 **Suggestion:**
 ```
-[suggestion] <observation — one tight sentence>. Consider <direction>.
+[AI][suggestion] <observation — one tight sentence>. Consider <direction>.
 ```
 
 **Nit:**
 ```
-[nit] <observation>.
+[AI][nit] <observation>.
 ```
 
 **Formatting note:** GitHub Markdown requires a blank line between sections for paragraph breaks. In the JSON payload, represent blank lines as `\n\n` between the three sections of a blocking comment. Suggestions and nits are single-line — no blank lines needed.
