@@ -168,7 +168,7 @@ Display the full draft to the user before touching GitHub:
 
 Ask explicitly:
 
-> "This will be saved as a draft review on GitHub in PENDING state — visible only to you until you submit via the GitHub UI. Shall I save it?"
+> "This will be saved as a draft review on GitHub — visible only to you until you submit via the GitHub UI. Shall I save it?"
 
 Do not proceed without a clear yes.
 
@@ -182,7 +182,7 @@ To derive the correct position: within the patch output, find the hunk containin
 gh pr diff {pr_number} --patch
 ```
 
-**The `event` field is always `"PENDING"` regardless of the recommended event type. The recommended event type is advisory prose in the body — for the user to select manually when they submit. Never change `"PENDING"` to another value.**
+**Omit the `event` field entirely.** GitHub creates the review in PENDING (draft) state when no `event` is provided. The recommended event type is advisory prose in the `body` — for the user to select manually when they submit. Never add an `event` field to the payload.
 
 Post the pending review:
 
@@ -192,7 +192,6 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
   --input - <<'EOF'
 {
   "body": "<aggregate summary with recommended event type>",
-  "event": "PENDING",
   "comments": [
     {
       "path": "<file path relative to repo root>",
