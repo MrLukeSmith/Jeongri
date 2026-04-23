@@ -127,20 +127,24 @@ Write comments from the verified findings list.
 
 **Blocking comment (must include evidence):**
 ```
-[blocking] <what the problem is> — <why it matters>.
-<evidence: file:line, call path, or code snippet from the verification subagent>
-Consider: <what to do instead, or where to look>.
+[blocking] <what the problem is — one tight sentence>.
+
+<evidence: file:line or minimal code snippet from the verification subagent>
+
+Consider: <what to do instead or where to look>.
 ```
 
 **Suggestion:**
 ```
-[suggestion] <observation> — <brief reasoning>. Consider <direction>.
+[suggestion] <observation — one tight sentence>. Consider <direction>.
 ```
 
 **Nit:**
 ```
 [nit] <observation>.
 ```
+
+**Formatting note:** GitHub Markdown requires a blank line between sections for paragraph breaks. In the JSON payload, represent blank lines as `\n\n` between the three sections of a blocking comment. Suggestions and nits are single-line — no blank lines needed.
 
 After all per-comment findings, write an **aggregate summary** (2–3 sentences):
 - State the overall picture
@@ -227,5 +231,8 @@ Do not do any of the following:
 
 - Write to a colleague, not a student. Assume good intent.
 - Don't soften blocking issues with excessive hedging — be clear about what's wrong.
-- Don't editorialize. State the problem, why it matters, offer a direction.
+- Don't editorialize. State the problem, why it matters, offer a direction. Nothing else.
 - For suggestions and nits, be brief. No extended reasoning needed.
+- Cut filler phrases: "Worth noting that", "It might be worth", "You might want to", "This could potentially", "Consider whether" — none of these add meaning. Drop them.
+- State the problem first. Evidence second. Direction third. No preamble.
+- Target length: [nit] = one sentence. [suggestion] = one to two sentences. [blocking] = three short sections (problem, evidence, direction).
