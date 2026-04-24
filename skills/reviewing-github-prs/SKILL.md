@@ -190,6 +190,7 @@ After all per-comment findings, write an **aggregate summary** (2–3 sentences)
 - Include the **recommended event type** — what you would submit if you were submitting: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`
 - If requesting changes: name the specific blocking issues by name
 - If approving with suggestions: say so explicitly so the author knows they can merge
+- **If criterion 9 produced a finding**, append the "Suggested decomposition" block to the aggregate summary body. The decomposition is PR-level and does not go in the inline `comments` array of the GitHub API payload.
 
 **Recommended event type guide:**
 - `APPROVE` — no verified blocking issues remain
