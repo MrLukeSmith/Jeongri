@@ -117,6 +117,29 @@ Before concluding "no findings" on this criterion, actively scan the codebase fo
 
 Prefer `"Why X?"` or `"What happens when Y?"` over assertions. The rest of the skill's communication guidance (direct, no hedging, no filler) still applies — a question can be short and direct.
 
+**9. Reviewer Cognitive Load** — Independent of scope coherence. Even a perfectly-scoped PR can be too much for a human reviewer to hold in their head and review competently. Agents can process arbitrary complexity; humans cannot — the goal of the review is to serve the human reviewer, not replace them.
+
+**Triggers (judgment, not strict thresholds):**
+- The diff contains multiple independent logical concerns that could each stand alone
+- The PR description's section count under-represents the number of concerns in the diff
+- A single concern's code change is small, but its support changes (test helpers, config, log suppression) are large and independently reviewable
+
+When triggered, produce a **top-level decomposition proposal** in the aggregate summary — never an inline comment:
+
+```
+Suggested decomposition (optional — this PR is coherent, just large for one review pass):
+
+PR 1 (standalone): <what it does>. Files: <paths>.
+PR 2 (depends on PR 1): <what it does>. Files: <paths>.
+PR 3: <what it does>. Files: <paths>.
+```
+
+One sentence per PR. Name files only when it clarifies the split. Dependencies must be explicit (`standalone`, `depends on PR N`). Three to five PRs is typical.
+
+- `[suggestion]` — always. Never blocks merge. Never produces an inline comment — the decomposition is PR-level by nature.
+
+If the PR is appropriately sized for one review pass, write `No findings` and move on — do not manufacture a decomposition.
+
 ### Step 3 — Verification Pass
 
 For every `[blocking]` finding that involves a reachability or correctness claim, dispatch a verification subagent before writing the comment. See `verification-subagent.md` for the exact prompt template.
