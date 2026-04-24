@@ -216,7 +216,7 @@ Do not do any of the following:
 | Anti-pattern | Why |
 |---|---|
 | Style opinions without a style guide or linter rule | Personal preference dressed as a standard |
-| Bikeshedding naming when the existing name is clear | Noise that obscures real findings |
+| Bikeshedding naming when the existing name is clear and unambiguous | Noise. Genuine stutter/ambiguity/misleading names belong under Codebase Consistency |
 | Blocking on personal preference | Wastes author time; undermines trust in reviews |
 | Flagging every criterion on every PR | If no findings, say nothing |
 | Asserting `[blocking]` without verification | A wrong blocking claim is worse than a missed suggestion |
