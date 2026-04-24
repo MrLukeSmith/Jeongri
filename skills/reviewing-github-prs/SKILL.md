@@ -105,7 +105,7 @@ Before concluding "no findings" on this criterion, actively scan the codebase fo
 
 **8. Justification Audit** — Interrogate the *why* behind non-obvious changes. Comments for this criterion default to **questions, not assertions** — the one criterion in the skill where a clarifying question is the desired output.
 
-Triggers:
+**Triggers:**
 - **Deletions** of code, tests, or test-support helpers without evident reason — ask: "why is this safe to remove now?"
 - **Defensive guards** added without a named failure mode (`&.`, `respond_to?`, new `rescue`) — ask: "what scenario does this protect against? If it's a bug, should we surface it instead of silencing it?"
 - **Workarounds** — new subclasses, monkey-patches, config overrides, or test-support patches that bypass rather than fix the source — ask: "what is the underlying issue, and why can't we address it there?"
