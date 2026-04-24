@@ -50,7 +50,7 @@ This context informs every severity judgment in the next step.
 
 ### Step 2 — Analysis Pass
 
-Work through all seven criteria in order. For each, assess the diff against the codebase context from Step 1. **Every criterion must produce an explicit entry** — write this list in your response before proceeding to Step 3.
+Work through all nine criteria in order. For each, assess the diff against the codebase context from Step 1. **Every criterion must produce an explicit entry** — write this list in your response before proceeding to Step 3.
 
 **Internal working format:**
 ```
@@ -61,7 +61,7 @@ Severity: `[blocking]` / `[suggestion]` / `[nit]` — omit if no findings
 Reason: <one sentence on why this severity> — omit if no findings
 ```
 
-All seven criteria must appear in the list. `No findings` is a valid and expected result — do not manufacture observations to fill it.
+All nine criteria must appear in the list. `No findings` is a valid and expected result — do not manufacture observations to fill it.
 
 **Severity reference:**
 
@@ -71,7 +71,7 @@ All seven criteria must appear in the list. `No findings` is a valid and expecte
 | `[suggestion]` | Should be addressed; author's call | No | No |
 | `[nit]` | Minor; no pressure | No | No |
 
-**The seven criteria:**
+**The nine criteria:**
 
 **1. Correctness** — Logic errors, wrong assumptions, off-by-ones, incorrect branching. Any plausible path where this code produces the wrong result.
 - `[blocking]` — any realistic path to incorrect output
