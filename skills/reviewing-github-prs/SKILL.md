@@ -103,6 +103,20 @@ Before concluding "no findings" on this criterion, actively scan the codebase fo
 **7. Scope Creep** — Does the PR do more than described? Does it mix unrelated concerns in a way that makes review harder or rollback riskier?
 - `[suggestion]` always — sometimes scope creep is valid, but worth surfacing
 
+**8. Justification Audit** — Interrogate the *why* behind non-obvious changes. Comments for this criterion default to **questions, not assertions** — the one criterion in the skill where a clarifying question is the desired output.
+
+Triggers:
+- **Deletions** of code, tests, or test-support helpers without evident reason — ask: "why is this safe to remove now?"
+- **Defensive guards** added without a named failure mode (`&.`, `respond_to?`, new `rescue`) — ask: "what scenario does this protect against? If it's a bug, should we surface it instead of silencing it?"
+- **Workarounds** — new subclasses, monkey-patches, config overrides, or test-support patches that bypass rather than fix the source — ask: "what is the underlying issue, and why can't we address it there?"
+- **New classes, modules, or services without a class-level comment** explaining their purpose, especially when the class exists as a workaround.
+- **Undocumented changes** — diff content not mentioned in the PR description. Flag the specific change and ask that the description be updated.
+
+- `[suggestion]` — default. The change looks reasonable but needs a documented rationale.
+- `[blocking]` — rare. Use only when the unexplained change carries real risk: a defensive guard that may hide a correctness bug, or a deletion of behaviour that is load-bearing elsewhere.
+
+Prefer `"Why X?"` or `"What happens when Y?"` over assertions. The rest of the skill's communication guidance (direct, no hedging, no filler) still applies — a question can be short and direct.
+
 ### Step 3 — Verification Pass
 
 For every `[blocking]` finding that involves a reachability or correctness claim, dispatch a verification subagent before writing the comment. See `verification-subagent.md` for the exact prompt template.
