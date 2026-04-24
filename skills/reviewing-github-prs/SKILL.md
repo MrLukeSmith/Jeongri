@@ -50,7 +50,7 @@ This context informs every severity judgment in the next step.
 
 ### Step 2 — Analysis Pass
 
-Work through all seven criteria in order. For each, assess the diff against the codebase context from Step 1. **Every criterion must produce an explicit entry** — write this list in your response before proceeding to Step 3.
+Work through all nine criteria in order. For each, assess the diff against the codebase context from Step 1. **Every criterion must produce an explicit entry** — write this list in your response before proceeding to Step 3.
 
 **Internal working format:**
 ```
@@ -61,7 +61,7 @@ Severity: `[blocking]` / `[suggestion]` / `[nit]` — omit if no findings
 Reason: <one sentence on why this severity> — omit if no findings
 ```
 
-All seven criteria must appear in the list. `No findings` is a valid and expected result — do not manufacture observations to fill it.
+All nine criteria must appear in the list. `No findings` is a valid and expected result — do not manufacture observations to fill it.
 
 **Severity reference:**
 
@@ -71,7 +71,7 @@ All seven criteria must appear in the list. `No findings` is a valid and expecte
 | `[suggestion]` | Should be addressed; author's call | No | No |
 | `[nit]` | Minor; no pressure | No | No |
 
-**The seven criteria:**
+**The nine criteria:**
 
 **1. Correctness** — Logic errors, wrong assumptions, off-by-ones, incorrect branching. Any plausible path where this code produces the wrong result.
 - `[blocking]` — any realistic path to incorrect output
@@ -94,12 +94,53 @@ All seven criteria must appear in the list. `No findings` is a valid and expecte
 - `[suggestion]` in most cases; author may have context that justifies it
 - `[blocking]` only if genuinely unmaintainable or obscures correctness
 
-**6. Codebase Consistency** — Does this introduce a new pattern where one exists? Does it break established conventions identified in Step 1?
-- `[suggestion]` in most cases
+**6. Codebase Consistency** — Does this introduce a new pattern where one exists? Does it break established conventions identified in Step 1? Does it reimplement behaviour that an existing helper, abstraction, or test-support module already provides?
+- `[suggestion]` in most cases, including when a pre-existing abstraction would fit better
 - `[blocking]` only if the inconsistency is likely to cause bugs (e.g. diverging from a safety convention)
+
+Before concluding "no findings" on this criterion, actively scan the codebase for helpers or modules whose names suggest overlap with what the PR adds (e.g. `*Switching`, `*Helper`, `Shared*`, or names close to the domain of the new code). The "Existing abstractions" note from Step 1 is the input.
 
 **7. Scope Creep** — Does the PR do more than described? Does it mix unrelated concerns in a way that makes review harder or rollback riskier?
 - `[suggestion]` always — sometimes scope creep is valid, but worth surfacing
+
+**8. Justification Audit** — Interrogate the *why* behind non-obvious changes. Comments for this criterion default to **questions, not assertions** — the one criterion in the skill where a clarifying question is the desired output.
+
+**Triggers:**
+- **Deletions** of code, tests, or test-support helpers without evident reason — ask: "why is this safe to remove now?"
+- **Defensive guards** added without a named failure mode (`&.`, `respond_to?`, new `rescue`) — ask: "what scenario does this protect against? If it's a bug, should we surface it instead of silencing it?"
+- **Workarounds** — new subclasses, monkey-patches, config overrides, or test-support patches that bypass rather than fix the source — ask: "what is the underlying issue, and why can't we address it there?"
+- **New classes, modules, or services without a class-level comment** explaining their purpose, especially when the class exists as a workaround.
+- **Undocumented changes** — diff content not mentioned in the PR description. Flag the specific change and ask that the description be updated.
+
+**Severity:**
+- `[suggestion]` — default. The change looks reasonable but needs a documented rationale.
+- `[blocking]` — rare. Use only when the unexplained change carries real risk: a defensive guard that may hide a correctness bug, or a deletion of behaviour that is load-bearing elsewhere.
+
+Prefer `"Why X?"` or `"What happens when Y?"` over assertions. The rest of the skill's communication guidance (direct, no hedging, no filler) still applies — a question can be short and direct.
+
+**9. Reviewer Cognitive Load** — Independent of scope coherence. Even a perfectly-scoped PR can be too much for a human reviewer to hold in their head and review competently. Agents can process arbitrary complexity; humans cannot — the goal of the review is to serve the human reviewer, not replace them.
+
+**Triggers (judgment, not strict thresholds):**
+- The diff contains multiple independent logical concerns that could each stand alone
+- The PR description's section count under-represents the number of concerns in the diff
+- A single concern's code change is small, but its support changes (test helpers, config, log suppression) are large and independently reviewable
+
+When triggered, produce a **top-level decomposition proposal** in the aggregate summary — never an inline comment:
+
+```
+Suggested decomposition (optional — this PR is coherent, just large for one review pass):
+
+PR 1 (standalone): <what it does>. Files: <paths>.
+PR 2 (depends on PR 1): <what it does>. Files: <paths>.
+PR 3: <what it does>. Files: <paths>.
+```
+
+One sentence per PR. Name files only when it clarifies the split. Dependencies must be explicit (`standalone`, `depends on PR N`). Three to five PRs is typical.
+
+**Severity:**
+- `[suggestion]` — always. Never blocks merge. Never produces an inline comment — the decomposition is PR-level by nature.
+
+If the PR is appropriately sized for one review pass, write `No findings` and move on — do not manufacture a decomposition.
 
 ### Step 3 — Verification Pass
 
@@ -151,6 +192,7 @@ After all per-comment findings, write an **aggregate summary** (2–3 sentences)
 - Include the **recommended event type** — what you would submit if you were submitting: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`
 - If requesting changes: name the specific blocking issues by name
 - If approving with suggestions: say so explicitly so the author knows they can merge
+- **If criterion 9 produced a finding**, append the "Suggested decomposition" block to the aggregate summary body. The decomposition is PR-level and does not go in the inline `comments` array of the GitHub API payload.
 
 **Recommended event type guide:**
 - `APPROVE` — no verified blocking issues remain
@@ -216,7 +258,7 @@ Do not do any of the following:
 | Anti-pattern | Why |
 |---|---|
 | Style opinions without a style guide or linter rule | Personal preference dressed as a standard |
-| Bikeshedding naming when the existing name is clear | Noise that obscures real findings |
+| Bikeshedding naming when the existing name is clear and unambiguous | Noise. Genuine stutter/ambiguity/misleading names belong under Codebase Consistency |
 | Blocking on personal preference | Wastes author time; undermines trust in reviews |
 | Flagging every criterion on every PR | If no findings, say nothing |
 | Asserting `[blocking]` without verification | A wrong blocking claim is worse than a missed suggestion |
