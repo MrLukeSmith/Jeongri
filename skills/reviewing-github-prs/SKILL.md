@@ -94,9 +94,11 @@ All seven criteria must appear in the list. `No findings` is a valid and expecte
 - `[suggestion]` in most cases; author may have context that justifies it
 - `[blocking]` only if genuinely unmaintainable or obscures correctness
 
-**6. Codebase Consistency** — Does this introduce a new pattern where one exists? Does it break established conventions identified in Step 1?
-- `[suggestion]` in most cases
+**6. Codebase Consistency** — Does this introduce a new pattern where one exists? Does it break established conventions identified in Step 1? Does it reimplement behaviour that an existing helper, abstraction, or test-support module already provides?
+- `[suggestion]` in most cases, including when a pre-existing abstraction would fit better
 - `[blocking]` only if the inconsistency is likely to cause bugs (e.g. diverging from a safety convention)
+
+Before concluding "no findings" on this criterion, actively scan the codebase for helpers or modules whose names suggest overlap with what the PR adds (e.g. `*Switching`, `*Helper`, `Shared*`, or names close to the domain of the new code). The "Existing abstractions" note from Step 1 is the input.
 
 **7. Scope Creep** — Does the PR do more than described? Does it mix unrelated concerns in a way that makes review harder or rollback riskier?
 - `[suggestion]` always — sometimes scope creep is valid, but worth surfacing
