@@ -112,6 +112,7 @@ Before concluding "no findings" on this criterion, actively scan the codebase fo
 - **New classes, modules, or services without a class-level comment** explaining their purpose, especially when the class exists as a workaround.
 - **Undocumented changes** — diff content not mentioned in the PR description. Flag the specific change and ask that the description be updated.
 
+**Severity:**
 - `[suggestion]` — default. The change looks reasonable but needs a documented rationale.
 - `[blocking]` — rare. Use only when the unexplained change carries real risk: a defensive guard that may hide a correctness bug, or a deletion of behaviour that is load-bearing elsewhere.
 
@@ -136,6 +137,7 @@ PR 3: <what it does>. Files: <paths>.
 
 One sentence per PR. Name files only when it clarifies the split. Dependencies must be explicit (`standalone`, `depends on PR N`). Three to five PRs is typical.
 
+**Severity:**
 - `[suggestion]` — always. Never blocks merge. Never produces an inline comment — the decomposition is PR-level by nature.
 
 If the PR is appropriately sized for one review pass, write `No findings` and move on — do not manufacture a decomposition.
