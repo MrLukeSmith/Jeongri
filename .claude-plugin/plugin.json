@@ -1,7 +1,7 @@
 {
   "name": "jeongri",
   "description": "A curated collection of opinionated skills that sharpen how Claude Code reasons, communicates, and ships software.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "Luke Smith",
     "email": "smithmr8@gmail.com"
@@ -9,5 +9,11 @@
   "homepage": "https://github.com/MrLukeSmith/Jeongri",
   "repository": "https://github.com/MrLukeSmith/Jeongri",
   "license": "MIT",
-  "keywords": ["skills", "workflows", "code-review", "pull-requests", "best-practices"]
+  "keywords": [
+    "skills",
+    "workflows",
+    "code-review",
+    "pull-requests",
+    "best-practices"
+  ]
 }
