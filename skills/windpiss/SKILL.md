@@ -20,6 +20,7 @@ Back-and-forth conversation. After each user response, naturally:
 - Ask probing Socratic questions (see guidelines below)
 - Surface connective threads between what they're saying now and earlier points
 - Spot gaps in what's been considered
+- Challenge assumptions gently — "Is that actually a constraint, or an assumption?"
 
 ### 3. Check-in
 Periodically (roughly every 4–6 exchanges, or when the conversation stalls), offer to capture progress:
