@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add OpenCode and Gemini CLI packaging/config so the existing four Jeongri skills are discoverable on those platforms, plus a Bash/jq version-bump script and mise config to keep manifest versions in sync.
+**Goal:** Add OpenCode and Gemini CLI packaging/config so the existing Jeongri skills are discoverable on those platforms, plus a Bash/jq version-bump script and mise config to keep manifest versions in sync.
 
 **Architecture:** Mirror the `obra/superpowers` multi-platform packaging pattern: an OpenCode plugin auto-registers the repo `skills/` directory, a Gemini CLI extension manifest points to a root `GEMINI.md` context file, and install docs live under `.opencode/` and `docs/`. A small Bash script backed by `jq` updates the three versioned manifests together.
 
@@ -133,7 +133,7 @@ git commit -m "feat(gemini): add extension manifest"
 - Create: `GEMINI.md`
 
 **Interfaces:**
-- Produces: self-contained context file describing the four skills and Gemini tool mappings.
+- Produces: self-contained context file describing the existing Jeongri skills and Gemini tool mappings.
 
 - [ ] **Step 1: Create `GEMINI.md`**
 
