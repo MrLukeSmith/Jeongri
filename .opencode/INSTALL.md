@@ -22,7 +22,7 @@ Verify by asking:
 use skill tool to list skills
 ```
 
-You should see `phasing`, `reviewing-github-prs`, `ruminate`, and `writing-pr-descriptions`.
+You should see `phasing`, `reviewing-github-prs`, `ruminate`, `windpiss`, and `writing-pr-descriptions`.
 
 ## Pinning a version
 

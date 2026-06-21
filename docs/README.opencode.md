@@ -31,6 +31,7 @@ use skill tool to load reviewing-github-prs
 - `phasing` — decompose a large project into ordered phases.
 - `reviewing-github-prs` — structured GitHub PR review.
 - `ruminate` — explore requirements and produce a design spec.
+- `windpiss` — guided Socratic ideation from a vague idea to a lightly structured capture.
 - `writing-pr-descriptions` — write reviewer-focused PR descriptions.
 
 ## Tool mapping

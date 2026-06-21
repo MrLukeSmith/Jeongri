@@ -7,6 +7,7 @@ Jeongri (정리) is a collection of opinionated skills for cleaning up and organ
 - `phasing` — decompose a large project into ordered, buildable phases.
 - `reviewing-github-prs` — structured GitHub pull-request review.
 - `ruminate` — explore requirements and produce a design spec.
+- `windpiss` — guided Socratic ideation from a vague idea to a lightly structured capture.
 - `writing-pr-descriptions` — write reviewer-focused PR descriptions.
 
 Activate any skill with:
