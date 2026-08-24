@@ -27,3 +27,65 @@ Seven phases in order:
 5. **Verification** — ...
 6. **PoC generation** — ...
 7. **Report** — ...
+
+## The Checklist (the anchor)
+
+Every analyst walks these fourteen categories in order and logs an explicit entry per category — a finding, or `No findings`. Categories 1–13 are closed and repeatable; category 14 is the deliberate open-ended slot for logic flaws no checklist enumerates. Grounded in OWASP Top 10 (2021) and the CWE Top 25, trimmed to what is detectable from source.
+
+| # | Category | Primary CWEs | OWASP |
+|---|---|---|---|
+| 1 | Injection (SQL / NoSQL / OS / LDAP) | CWE-89, 78, 90 | A03 |
+| 2 | Cross-site scripting | CWE-79 | A03 |
+| 3 | Broken access control / authorization (incl. IDOR) | CWE-284, 285, 639 | A01 |
+| 4 | Authentication & session management | CWE-287, 384, 613 | A07 |
+| 5 | Cryptographic failures | CWE-327, 328, 916, 330 | A02 |
+| 6 | Secrets & hardcoded credentials | CWE-798, 259 | A07 |
+| 7 | Deserialization & unsafe input parsing (incl. XXE) | CWE-502, 611 | A08 |
+| 8 | SSRF & unvalidated redirects | CWE-918, 601 | A10 |
+| 9 | Path traversal & unrestricted file handling | CWE-22, 434 | A01 |
+| 10 | Input validation & memory bounds | CWE-20, 787, 125 | A03 |
+| 11 | Security misconfiguration & insecure defaults | CWE-16, 732 | A05 |
+| 12 | Sensitive data exposure & logging | CWE-200, 532 | A02 |
+| 13 | Vulnerable dependencies (manifest signals) | CWE-1104 | A06 |
+| 14 | Business-logic / race / TOCTOU | CWE-367, 362 | — |
+
+## Finding Schema
+
+Every analyst returns an array of findings in this shape:
+
+```json
+{
+  "title": "SQL injection in user lookup",
+  "category": 1,
+  "cwe": "CWE-89",
+  "owasp": "A03:2021",
+  "file": "src/db/users.py",
+  "line": 42,
+  "severity": "Critical",
+  "exploitability": 90,
+  "certainty": 85,
+  "evidence": "Raw f-string interpolation of request.args['id'] into query; no parameterization. Reachable from unauthenticated /lookup route.",
+  "remediation": "Use a parameterized query: cursor.execute(sql, (id,)).",
+  "poc": null,
+  "status": "unverified"
+}
+```
+
+- **`exploitability`** (0–100) — how likely the finding is a real, reachable, exploitable vulnerability. Set from reachability analysis, refined by the verifier.
+- **`certainty`** (0–100) — the analyst's confidence in its own reading of the code, independent of exploitability. Capped low when cross-file context is unavailable.
+- **`status`** — `unverified` → `confirmed` | `refuted` | `inconclusive` after phase 5.
+- **`poc`** — null until phase 6; filled only when confirmed and above the threshold.
+
+## Severity Rubric
+
+Assigned by the analyst, adjusted by the verifier. Anchored to impact and reachability so it is not a vibe.
+
+| Severity | Meaning | Typical exploitability |
+|---|---|---|
+| **Critical** | Unauthenticated RCE, auth bypass, or trivial data exfiltration | ≥ 80 |
+| **High** | Significant impact but requires some condition (authenticated user, specific config) | 60–90 |
+| **Medium** | Limited impact or a hard-to-reach path | 30–70 |
+| **Low** | Defence-in-depth gap or minor info leak | < 40 |
+| **Info** | Hardening note; no direct attack path | — |
+
+The report ranks by severity band, then by exploitability % within the band.
