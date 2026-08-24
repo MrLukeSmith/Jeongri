@@ -22,11 +22,14 @@ Seven phases in order:
    | `severity_floor` | Info | Lowest severity included in the report |
 
 2. **Partition** — Filter before partitioning: skip `node_modules`, `vendor`, `dist`, `build`, `.git`, lockfiles, minified/generated code, and binary assets. The dependency category reads manifests only (`package.json`, `requirements.txt`, `go.mod`, …), never vendored source. Partition the remaining files into units: a unit is **one file**, unless files are tiny and tightly coupled — then cluster into a coupled module capped at ~1500 LOC so an analyst sees whole logic paths without truncation. Dispatch analysts with **bounded concurrency**: batches of ~8–10 units at a time rather than all at once, reporting progress between batches. Apply the **hard scale guard**: if the unit count exceeds a ceiling of ~150, stop and tell the user — recommend narrowing scope, or ask them to confirm a long run — and never silently truncate. The scan manifest always logs what was covered and what was skipped, so a bounded run never reads as full coverage.
-3. **Analysis fan-out** — ...
-4. **Aggregate & dedupe** — ...
-5. **Verification** — ...
-6. **PoC generation** — ...
-7. **Report** — ...
+3. **Analysis fan-out** — Dispatch analyst subagents in bounded batches of ~8–10 concurrent, one analyst per unit, using the `analysis-subagent.md` prompt template. Each analyst receives its unit's files, the full fourteen-category checklist, and the finding schema, and returns a structured findings array. Report progress between batches (units completed / units total) so a long run is visible rather than silent.
+4. **Aggregate & dedupe** — Merge every unit's findings array into one list. Collapse cross-unit duplicates: two findings referring to the **same CWE and the same root cause** (not merely the same file) collapse into one entry, keeping the strongest evidence and widest location reference. Rank the merged list by severity band first (Critical > High > Medium > Low > Info), then by exploitability % descending within each band.
+5. **Verification** — For every **Critical** and **High** finding only, dispatch an adversarial refutation subagent using the `verification-subagent.md` prompt template — it tries to prove the finding wrong or unreachable. Medium/Low/Info findings skip this pass and keep their analyst-assigned confidence. Apply the result:
+   - **Confirmed** — lock the severity and set `status: confirmed`; exploitability is set from the proven attack path.
+   - **Refuted** — drop the finding, or downgrade it to Info if still worth noting as a hardening note; `status: refuted`.
+   - **Inconclusive** — keep the finding, cap `exploitability` at 60, set `status: inconclusive`, and flag the open uncertainty in the report.
+6. **PoC generation** — Generate a minimal illustrative proof-of-concept **only** for findings with `status: confirmed` **and** `exploitability` above `poc_threshold` (default 75). Every other finding — below the threshold, or not confirmed — keeps `poc: null` and is tagged **"PoC available on request"** so the user can ask for one afterwards. PoCs are defensively framed: the code owner is auditing their own code to fix it.
+7. **Report** — Write the full report to `docs/security/YYYY-MM-DD-<scope>-audit.md` using the `report-template.md` structure, then echo a tight summary in chat: header, summary table, and counts by severity — not the full per-finding detail.
 
 ## The Checklist (the anchor)
 
@@ -89,3 +92,22 @@ Assigned by the analyst, adjusted by the verifier. Anchored to impact and reacha
 | **Info** | Hardening note; no direct attack path | — |
 
 The report ranks by severity band, then by exploitability % within the band.
+
+## Communication Tone
+
+- Write to an engineer auditing their own system. Assume good intent, state findings plainly.
+- No hedging on confirmed high-severity findings — be clear about what is exploitable and why.
+- State the problem, the evidence, then the fix. No preamble, no editorializing.
+- `No findings` per category is a valid and expected result — never manufacture a finding to fill a row.
+
+## Anti-Patterns
+
+| Anti-pattern | Why it's wrong |
+|---|---|
+| Reporting a finding without a reachability / attack-path argument | Theoretical noise; erodes trust in the report |
+| Asserting Critical/High without the refutation pass | A wrong high-severity finding is worse than a missed low one |
+| Skipping a checklist category silently | Breaks the determinism guarantee; the explicit `No findings` entry is the point |
+| Manufacturing findings to fill every category | Padding hides the real signal |
+| Silently truncating a large scope | Reads as full coverage when it isn't; always log what was skipped |
+| Generating a PoC below the threshold unprompted | Offensive code should be gated on confirmed, high-exploitability findings |
+| Reporting file/function facts not visible in the scanned unit | Hallucinated context; treat only observed code as ground truth |
