@@ -4,7 +4,9 @@ Jeongri (정리) is a collection of opinionated skills for cleaning up and organ
 
 ## Available skills
 
+- `auditing-vulnerabilities` — audit a codebase, folder, or file for security vulnerabilities, ranked by severity with confidence scores.
 - `phasing` — decompose a large project into ordered, buildable phases.
+- `pr-audit` — audit a pull request's reviewability and estimate review friction.
 - `reviewing-github-prs` — structured GitHub pull-request review.
 - `ruminate` — explore requirements and produce a design spec.
 - `windpiss` — guided Socratic ideation from a vague idea to a lightly structured capture.
