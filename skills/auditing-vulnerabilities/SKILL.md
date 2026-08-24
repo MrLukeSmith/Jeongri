@@ -25,11 +25,11 @@ Seven phases in order:
 3. **Analysis fan-out** — Dispatch analyst subagents in bounded batches of ~8–10 concurrent, one analyst per unit, using the `analysis-subagent.md` prompt template. Each analyst receives its unit's files, the full fourteen-category checklist, and the finding schema, and returns a structured findings array. Report progress between batches (units completed / units total) so a long run is visible rather than silent.
 4. **Aggregate & dedupe** — Merge every unit's findings array into one list. Collapse cross-unit duplicates: two findings referring to the **same CWE and the same root cause** (not merely the same file) collapse into one entry, keeping the strongest evidence and widest location reference. Rank the merged list by severity band first (Critical > High > Medium > Low > Info), then by exploitability % descending within each band.
 5. **Verification** — For every **Critical** and **High** finding only, dispatch an adversarial refutation subagent using the `verification-subagent.md` prompt template — it tries to prove the finding wrong or unreachable. Medium/Low/Info findings skip this pass and keep their analyst-assigned confidence. Apply the result:
-   - **Confirmed** — lock the severity and set `status: confirmed`; exploitability is set from the proven attack path.
+   - **Confirmed** — lock the severity and set `status: confirmed`; exploitability is set from the proven attack path; certainty is also updated to reflect the now-verified reading, since the verifier has resolved cross-file context the analyst lacked.
    - **Refuted** — drop the finding, or downgrade it to Info if still worth noting as a hardening note; `status: refuted`.
    - **Inconclusive** — keep the finding, cap `exploitability` at 60, set `status: inconclusive`, and flag the open uncertainty in the report.
 6. **PoC generation** — Generate a minimal illustrative proof-of-concept **only** for findings with `status: confirmed` **and** `exploitability` above `poc_threshold` (default 75). Every other finding — below the threshold, or not confirmed — keeps `poc: null` and is tagged **"PoC available on request"** so the user can ask for one afterwards. PoCs are defensively framed: the code owner is auditing their own code to fix it.
-7. **Report** — Write the full report to `docs/security/YYYY-MM-DD-<scope>-audit.md` using the `report-template.md` structure, then echo a tight summary in chat: header, summary table, and counts by severity — not the full per-finding detail.
+7. **Report** — Before writing, apply `severity_floor`: drop any finding whose severity band is below the configured floor (Critical > High > Medium > Low > Info) from the report; the default, Info, excludes nothing. Write the full report to `docs/security/YYYY-MM-DD-<scope>-audit.md` using the `report-template.md` structure, then echo a tight summary in chat: header, summary table, and counts by severity — not the full per-finding detail.
 
 ## The Checklist (the anchor)
 
@@ -37,19 +37,19 @@ Every analyst walks these fourteen categories in order and logs an explicit entr
 
 | # | Category | Primary CWEs | OWASP |
 |---|---|---|---|
-| 1 | Injection (SQL / NoSQL / OS / LDAP) | CWE-89, 78, 90 | A03 |
-| 2 | Cross-site scripting | CWE-79 | A03 |
-| 3 | Broken access control / authorization (incl. IDOR) | CWE-284, 285, 639 | A01 |
-| 4 | Authentication & session management | CWE-287, 384, 613 | A07 |
-| 5 | Cryptographic failures | CWE-327, 328, 916, 330 | A02 |
-| 6 | Secrets & hardcoded credentials | CWE-798, 259 | A07 |
-| 7 | Deserialization & unsafe input parsing (incl. XXE) | CWE-502, 611 | A08 |
-| 8 | SSRF & unvalidated redirects | CWE-918, 601 | A10 |
-| 9 | Path traversal & unrestricted file handling | CWE-22, 434 | A01 |
-| 10 | Input validation & memory bounds | CWE-20, 787, 125 | A03 |
-| 11 | Security misconfiguration & insecure defaults | CWE-16, 732 | A05 |
-| 12 | Sensitive data exposure & logging | CWE-200, 532 | A02 |
-| 13 | Vulnerable dependencies (manifest signals) | CWE-1104 | A06 |
+| 1 | Injection (SQL / NoSQL / OS / LDAP) | CWE-89, 78, 90 | A03:2021 |
+| 2 | Cross-site scripting | CWE-79 | A03:2021 |
+| 3 | Broken access control / authorization (incl. IDOR) | CWE-284, 285, 639 | A01:2021 |
+| 4 | Authentication & session management | CWE-287, 384, 613 | A07:2021 |
+| 5 | Cryptographic failures | CWE-327, 328, 916, 330 | A02:2021 |
+| 6 | Secrets & hardcoded credentials | CWE-798, 259 | A07:2021 |
+| 7 | Deserialization & unsafe input parsing (incl. XXE) | CWE-502, 611 | A08:2021 |
+| 8 | SSRF & unvalidated redirects | CWE-918, 601 | A10:2021 |
+| 9 | Path traversal & unrestricted file handling | CWE-22, 434 | A01:2021 |
+| 10 | Input validation & memory bounds | CWE-20, 787, 125 | A03:2021 |
+| 11 | Security misconfiguration & insecure defaults | CWE-16, 732 | A05:2021 |
+| 12 | Sensitive data exposure & logging | CWE-200, 532 | A02:2021 |
+| 13 | Vulnerable dependencies (manifest signals) | CWE-1104 | A06:2021 |
 | 14 | Business-logic / race / TOCTOU | CWE-367, 362 | — |
 
 ## Finding Schema
