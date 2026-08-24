@@ -38,9 +38,9 @@ Read the design doc if one exists — for context on intent, not to copy from. C
 
 Before writing, ask the user the following questions in a single message. Wait for their response before proceeding.
 
-- **Rationale:** What was the motivation or justification for this work? (e.g. a bug report, a product decision, a performance problem)
-- **Related changes:** Are there any related PRs, issues, or external links to reference?
-- **Anything else:** Is there anything non-obvious the reviewer should know that isn't clear from the diff or commits?
+- **Context:** What was the motivation or justification for this work? (e.g. a bug report, a product decision, a performance problem)
+- **Related:** Are there any related PRs, issues, or external links to reference?
+- **Technical considerations:** Is there anything non-obvious the reviewer should know that isn't clear from the diff or commits?
 
 Accept partial answers — if the user skips a question, infer what you can from the diff and commits.
 
@@ -51,24 +51,30 @@ Accept partial answers — if the user skips a question, infer what you can from
 **If no PR template exists:** Use this format:
 
 ```markdown
-## Why
+## Context
 
 <1-2 sentences: why this change exists, linking to issue/prior PRs if relevant>
 
-## Watch out for
+## Change summary
+
+<Concise summary of key changes>
+
+## Technical considerations
 
 - <Only items needing reviewer attention>
+
+## Related
+
+- <Related PRs, issues, or external links>
 ```
 
-Omit "Watch out for" entirely if there's nothing to flag.
+Omit "Technical considerations" and "Related" entirely if there's nothing to flag.
 
 ## What Belongs
 
-- Why this change exists (1 sentence of context)
-- Breaking changes or migration steps
-- Things that look wrong but are intentional (and why)
-- Decisions that were controversial or non-obvious
-- Risks the reviewer should evaluate
+- Context: Why this change exists (1 sentence of context)
+- Change summary: Breaking changes or migration steps, and key changes that have taken place
+- Technical considerations: Things that look wrong but are intentional (and why), decisions that were controversial or non-obvious, risks the reviewer should evaluate
 
 ## What Does NOT Belong
 
@@ -77,6 +83,7 @@ Omit "Watch out for" entirely if there's nothing to flag.
 - Things you didn't change ("ManualX was not migrated")
 - What you preserved — only mention what you *didn't* preserve
 - Narration of your implementation process
+- Detailed technical implementation details that are visible in the diff
 
 ## Format Rules
 
