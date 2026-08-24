@@ -51,6 +51,15 @@ Rows are ordered by severity band, then by exploitability % within the band.
 - **Remediation:** <…>
 - **Proof of concept:** PoC available on request (exploitability below the 75% threshold).
 
+### 3. <title> — Medium
+
+- **Location:** `web/views.py:23`
+- **CWE / OWASP:** CWE-79 / A03:2021
+- **Exploitability:** 45% · **Certainty:** 75% · **Status:** unverified
+- **Evidence / attack path:** <…>
+- **Remediation:** <…>
+- **Proof of concept:** PoC available on request (Medium findings are not run through the verification pass, and this is below the 75% threshold).
+
 ## Coverage note
 
 - **Scanned:** <what was covered — N units across the scope>.
