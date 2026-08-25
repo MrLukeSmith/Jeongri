@@ -1,6 +1,6 @@
 # Report Template
 
-Fill this structure in phase 7 (Report) and write it to `docs/security/YYYY-MM-DD-<scope>-audit.md` in the audited project. Echo only the Header, the Summary table, and the severity counts into chat — not the full per-finding detail. Replace every `<…>` placeholder; drop the PoC block from a finding that has none and tag it "PoC available on request."
+Fill this structure in phase 8 (Report) and write it to `docs/security/YYYY-MM-DD-<scope>-audit.md` in the audited project. Echo only the Header, the Summary table, and the severity counts into chat — not the full per-finding detail. Replace every `<…>` placeholder; drop the PoC block from a finding that has none and tag it "PoC available on request."
 
 The Summary-table columns are the finding-schema fields from `SKILL.md` ("Finding Schema"): `severity`, `title`, `cwe`, `owasp`, `file:line`, `exploitability`, `certainty`, `status`.
 
@@ -65,6 +65,7 @@ Rows are ordered by severity band, then by exploitability % within the band.
 - **Scanned:** <what was covered — N units across the scope>.
 - **Skipped:** <what was excluded and why — vendored/generated/dependency paths, binaries, lockfiles>.
 - **Truncation:** <none — or, if the scale guard tripped, exactly what was not analysed and why>.
+- **Cross-layer coverage:** <for a subtree scope, state that model/lib-primitive + unscoped-sink vulns are out of coverage by construction; list any unresolved-cross-layer primitives phase 5 could not link because their caller was outside scope, and recommend a paired caller-layer or whole-repo pass. State "N/A — whole-repo run" when scope was the repo root.>
 ```
 
 ---
@@ -72,5 +73,5 @@ Rows are ordered by severity band, then by exploitability % within the band.
 ## Notes
 
 - Every finding in the Summary table has a matching detail entry, most-severe first.
-- Include the Proof-of-concept block only when phase 6 generated one (confirmed finding, exploitability > `poc_threshold`); otherwise state "PoC available on request."
+- Include the Proof-of-concept block only when phase 7 generated one (confirmed finding, exploitability > `poc_threshold`); otherwise state "PoC available on request."
 - The Coverage note must state truncation honestly — a bounded run never reads as full coverage.

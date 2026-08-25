@@ -1,6 +1,6 @@
 # Verification Subagent
 
-Use this prompt template when dispatching an adversarial refutation subagent in phase 5 (Verification). One verifier is dispatched per **Critical** or **High** finding only — Medium/Low/Info findings skip this pass entirely and keep their analyst-assigned `exploitability`/`certainty`. Fill in all placeholders before dispatching: insert the finding under verification verbatim (matching the finding schema from SKILL.md's "Finding Schema" section) into `{finding}` below.
+Use this prompt template when dispatching an adversarial refutation subagent in phase 6 (Verification). Dispatch one verifier per finding that is **Critical or High**, **or** carries `cross_file_dependency: true`, **or** was promoted from a `primitive_of_concern` in phase 5 — regardless of its severity band. A finding that is Medium/Low/Info **and** self-contained (no cross-file flag) skips this pass and keeps its analyst-assigned `exploitability`/`certainty`. This deliberately verifies low-scored cross-file findings: a bug scored low *only* because its caller/sink was out of the analysed unit must reach the one pass that resolves that context, or it stays buried. Fill in all placeholders before dispatching: insert the finding under verification verbatim (matching the finding schema from SKILL.md's "Finding Schema" section) into `{finding}` below.
 
 ## Prompt Template
 
